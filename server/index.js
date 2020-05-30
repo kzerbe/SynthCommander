@@ -12,17 +12,32 @@ app.use(bodyParser.json());
 
 let patchDir = __dirname + '/patches';
 
-app.get('', (request, response) => {
-  response.send({'/status':'patch saved'});
-});
-
 app.get('/list', (request, response) => {
   fs.readdir(patchDir, (err, files) => {
+    if(err) {
+      response.send(`patch listing failed: ${err.message}`)
+    }
     let patches = files.map(fn => {
       return fn.substring(0, fn.lastIndexOf('.'))
     });
     let list = JSON.stringify(patches);
     response.send(list);
+  });
+});
+
+app.get('/load', (request, response) => {
+  let patchname = request.query.name;
+  if (!patchname) {
+    response.status(404).send('patch name missing');
+    return;
+  }
+  let filename = `${patchDir}/${patchname}.json`;
+  fs.readFile(filename, (err, data) => {
+    if (err) {
+      response.status(404).send('patch file not found');
+      return;
+    }
+    response.status(200).send(data);
   });
 });
 
@@ -40,7 +55,7 @@ app.post('/store', (request, response) => {
   } else {
     msg = 'patchname is missing';
   }
-  response.send(`{'status: '${msg}'`)
+  response.status(200).send(`{'status: '${msg}'`)
 });
 
 app.listen(port, () => {
