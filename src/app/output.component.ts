@@ -4,7 +4,7 @@ import {Observable} from "rxjs";
 import {controls} from "./controlModel";
 import {Output} from "webmidi";
 import {WebmidiService} from "./webmidi.service";
-import {PatchfileService} from "./patchfile.service";
+import {PatchfileService, IControlParameter} from "./patchfile.service";
 import {isEmpty} from "rxjs/operators";
 
 @Directive({
@@ -15,11 +15,6 @@ export class SliderMoveDirective {
     let target = $event.target.nextSibling;
     target.textContent = $event.target.value;
   }
-}
-
-interface IControlParameter {
-  index: number;
-  value: number;
 }
 
 
@@ -104,7 +99,7 @@ export class OutputComponent {
 
   onChangeControl(controlIdx: number, value) {
     let control = this.ctx[controlIdx].key;
-    this.controlParameters[controlIdx] = {index: control, value:  parseInt(value.value, 10)};
+    this.controlParameters[controlIdx] = {parameterId: control, value:  parseInt(value.value, 10)};
 
     if (this.output.pipe(isEmpty())) {
       return;
@@ -132,7 +127,10 @@ export class OutputComponent {
       return;
     }
 
-    let patch = JSON.stringify({patchname: this.patchname, data: this.controlParameters });
+    let patch ={patchname: this.patchname, data: []};
+    for (let parameter of Object.values(this.controlParameters)) {
+      patch.data.push(parameter)
+    }
     this.patchService.savePatchFile(patch);
   }
  }

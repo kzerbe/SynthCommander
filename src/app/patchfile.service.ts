@@ -3,6 +3,17 @@ import {BehaviorSubject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 
 
+export interface IControlParameter {
+    parameterId: number;
+    value: number;
+}
+
+export interface IPatchDefinition {
+    patchname: string;
+    data: IControlParameter[];
+}
+
+
 @Injectable({
     providedIn: 'root'
 })
@@ -19,9 +30,9 @@ export class PatchfileService {
         return this.patchfiles;
     }
 
-    savePatchFile(patch: string) {
+    savePatchFile(patch: IPatchDefinition) {
         console.log(patch);
-        this.http.post('api/store', patch).subscribe(result => {
+        this.http.post<IPatchDefinition>('api/store', patch).subscribe(result => {
             console.log(result);
         });
     }

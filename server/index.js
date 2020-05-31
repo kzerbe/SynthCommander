@@ -55,7 +55,7 @@ app.post('/api/store', (request, response) => {
   } else {
     msg = 'patchname is missing';
   }
-  response.status(200).send(`{'status: '${msg}'`)
+  response.status(200).send(`{"status": "${msg}"}`)
 });
 
 app.listen(port, () => {

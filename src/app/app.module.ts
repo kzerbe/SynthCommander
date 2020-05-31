@@ -10,7 +10,6 @@ import {OutputComponent, SliderMoveDirective} from "./output.component";
 import {InputComponent} from "./input.component";
 import {EmptyComponent} from "./empty.component";
 import {HttpClientModule} from "@angular/common/http";
-import {FormsModule} from "@angular/forms";
 
 const routes: Routes = [
   {path: '', redirectTo: '/info', pathMatch: 'full'},
