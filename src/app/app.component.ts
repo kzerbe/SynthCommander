@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from "rxjs";
-import {WebMidiService} from "./WebMidiService";
+import {WebmidiService} from "./webmidi.service";
 import {Output} from "webmidi";
 
 @Component({
@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
   outputs: Observable<Output[]>;
   error: string;
 
-  constructor(private midiService: WebMidiService) {
+  constructor(private midiService: WebmidiService) {
   }
 
   ngOnInit(): void {

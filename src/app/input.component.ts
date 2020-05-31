@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, DoCheck, OnInit} from "@angular/core";
 
 import {controls} from "./controlModel";
-import {WebMidiService} from "./WebMidiService";
+import {WebmidiService} from "./webmidi.service";
 
 @Component({
   selector: 'app-input',
@@ -39,7 +39,7 @@ export class InputComponent implements OnInit, DoCheck {
   ctx = controls;
   controlValues: number[] = [];
 
-  constructor(private midiService: WebMidiService, private cdr: ChangeDetectorRef) {
+  constructor(private midiService: WebmidiService, private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit() {

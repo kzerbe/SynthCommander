@@ -1,8 +1,10 @@
 import {Component, Directive, HostListener} from '@angular/core';
+import {Observable} from "rxjs";
+
 import {controls} from "./controlModel";
 import {Output} from "webmidi";
-import {WebMidiService} from "./WebMidiService";
-import {Observable} from "rxjs";
+import {WebmidiService} from "./webmidi.service";
+import {PatchfileService} from "./patchfile.service";
 
 @Directive({
   selector: '[slidermove]'
@@ -25,16 +27,33 @@ export class SliderMoveDirective {
         <span class="col-1">{{testNote}}</span>
         <button [disabled]="!playing" class="btn btn-primary col-2" (click)="onMute()">mute</button>
       </div>
+      <br/>
+      <h4>Patch Storage</h4>
+      <form class="form">
+        <div class="form-group row">
+          <label class="col-form-label col-2 text-right" for="patchname">new patchname</label>
+          <input type="text" class="form-control col-4 mr-2" id="patchname"/>
+          <button class="btn btn-primary col-2 btn-sm">Save</button>
+        </div>
+        <div class="form-group row">
+          <label class="col-form-label col-2 text-right" for="selectpatch">select patch</label>
+          <select class="form-control col-4 mr-2" id="selectpatch">
+            <option *ngFor="let patch of patchfiles | async" [value]="patch">{{patch}}</option>
+          </select>
+          <button class="btn btn-primary col-2">Load</button>
+        </div>
+      </form>
+      <br/>
       <h4>Control Change</h4>
       <div class="row" *ngFor="let control of ctx; let idx2=index">
-        <label for=rv{{idx2}} class="col-4">{{control.mod}}&nbsp;{{control.attr}}</label>
+        <label for=rv{{idx2}} class="col-4 text-right" >{{control.mod}}&nbsp;{{control.attr}}</label>
         <input type="range" id=rv{{idx2}} class="col-4" value="0" min="0" max="127"
                (input)="onChangeControl(idx2, $event.target)" slidermove>
         <span class="col-1">0</span>
       </div>
     </div>
   `,
-  styles: []
+  styles: ['text-right {justify-content: right}']
 })
 export class OutputComponent {
   ctx = controls;
@@ -42,12 +61,14 @@ export class OutputComponent {
   error = '';
   testNote = 46;
   playing = false;
+  patchfiles: Observable<string[]>;
 
-  constructor(private midiService: WebMidiService) {
+  constructor(private midiService: WebmidiService, private patchService: PatchfileService) {
     this.output = midiService.currentOutput;
     midiService.error.subscribe(err => {
       this.error = err
     });
+    this.patchfiles = patchService.getPatchfiles();
   }
 
   onNoteChange(target: any) {
@@ -78,4 +99,4 @@ export class OutputComponent {
       output.sendControlChange(control, value.value, 1);
     });
   }
-}
+ }

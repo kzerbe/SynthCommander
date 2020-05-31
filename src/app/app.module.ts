@@ -2,12 +2,14 @@ import {BrowserModule} from '@angular/platform-browser';
 import {RouterModule, Routes} from "@angular/router";
 import {NgModule} from '@angular/core';
 
-import {WebMidiService} from "./WebMidiService";
+import {WebmidiService} from "./webmidi.service";
+import {PatchfileService} from "./patchfile.service";
 
 import {AppComponent} from './app.component';
 import {OutputComponent, SliderMoveDirective} from "./output.component";
 import {InputComponent} from "./input.component";
 import {EmptyComponent} from "./empty.component";
+import {HttpClientModule} from "@angular/common/http";
 
 const routes: Routes = [
   {path: '', redirectTo: '/info', pathMatch: 'full'},
@@ -22,9 +24,9 @@ const routes: Routes = [
     EmptyComponent
   ],
   imports: [
-    BrowserModule, RouterModule.forRoot(routes)
+    BrowserModule, RouterModule.forRoot(routes), HttpClientModule
   ],
-  providers: [{provide: WebMidiService}],
+  providers: [{provide: WebmidiService}, {provide: PatchfileService}],
   bootstrap: [AppComponent]
 })
 export class AppModule {

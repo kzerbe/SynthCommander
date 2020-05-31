@@ -10,7 +10,7 @@ export class ControlChangeMessage {
 @Injectable({
   providedIn: 'root'
 })
-export class WebMidiService {
+export class WebmidiService {
   error = new BehaviorSubject<string>('');
   inputs = new BehaviorSubject<Input[]>(null);
   outputs = new BehaviorSubject<Output[]>(null);

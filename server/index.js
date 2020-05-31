@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 let patchDir = __dirname + '/patches';
 
-app.get('/list', (request, response) => {
+app.get('/api/list', (request, response) => {
   fs.readdir(patchDir, (err, files) => {
     if(err) {
       response.send(`patch listing failed: ${err.message}`)
@@ -25,7 +25,7 @@ app.get('/list', (request, response) => {
   });
 });
 
-app.get('/load', (request, response) => {
+app.get('/api/load', (request, response) => {
   let patchname = request.query.name;
   if (!patchname) {
     response.status(404).send('patch name missing');
@@ -41,7 +41,7 @@ app.get('/load', (request, response) => {
   });
 });
 
-app.post('/store', (request, response) => {
+app.post('/api/store', (request, response) => {
   let msg = 'Ok';
   let patchname = request.body.patchname;
   if (!!patchname) {
