@@ -4,6 +4,7 @@ import {HttpClient} from "@angular/common/http";
 
 
 export interface IControlParameter {
+    index: number;
     parameterId: number;
     value: number;
 }

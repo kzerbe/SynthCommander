@@ -99,7 +99,10 @@ export class OutputComponent {
 
   onChangeControl(controlIdx: number, value) {
     let control = this.ctx[controlIdx].key;
-    this.controlParameters[controlIdx] = {parameterId: control, value:  parseInt(value.value, 10)};
+    this.controlParameters[controlIdx] = {
+      index: controlIdx,
+      parameterId: control,
+      value:  parseInt(value.value, 10)};
 
     if (this.output.pipe(isEmpty())) {
       return;
