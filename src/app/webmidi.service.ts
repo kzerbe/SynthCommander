@@ -15,7 +15,7 @@ export class WebmidiService {
   inputs = new BehaviorSubject<Input[]>(null);
   outputs = new BehaviorSubject<Output[]>(null);
   currentInput = new BehaviorSubject<Input>(null);
-  currentOutput = new BehaviorSubject<Output>(null);
+  currentOutput = new BehaviorSubject<Output|null>(null);
   controlChanges = new BehaviorSubject<ControlChangeMessage>(null);
 
   constructor() {

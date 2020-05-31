@@ -18,4 +18,11 @@ export class PatchfileService {
         })
         return this.patchfiles;
     }
+
+    savePatchFile(patch: string) {
+        console.log(patch);
+        this.http.post('api/store', patch).subscribe(result => {
+            console.log(result);
+        });
+    }
 }

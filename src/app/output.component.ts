@@ -5,6 +5,7 @@ import {controls} from "./controlModel";
 import {Output} from "webmidi";
 import {WebmidiService} from "./webmidi.service";
 import {PatchfileService} from "./patchfile.service";
+import {isEmpty} from "rxjs/operators";
 
 @Directive({
   selector: '[slidermove]'
@@ -15,6 +16,12 @@ export class SliderMoveDirective {
     target.textContent = $event.target.value;
   }
 }
+
+interface IControlParameter {
+  index: number;
+  value: number;
+}
+
 
 @Component({
   selector: 'app-output',
@@ -29,20 +36,20 @@ export class SliderMoveDirective {
       </div>
       <br/>
       <h4>Patch Storage</h4>
-      <form class="form">
+      <div class="form">
         <div class="form-group row">
           <label class="col-form-label col-2 text-right" for="patchname">new patchname</label>
-          <input type="text" class="form-control col-4 mr-2" id="patchname"/>
-          <button class="btn btn-primary col-2 btn-sm">Save</button>
+          <input type="text" class="form-control col-4 mr-2" id="patchname" (input)="updatePatchName($event.target.value)"/>
+          <button class="btn btn-primary col-2 btn-sm" (click)="onSavePatch()">Save</button>
         </div>
         <div class="form-group row">
           <label class="col-form-label col-2 text-right" for="selectpatch">select patch</label>
-          <select class="form-control col-4 mr-2" id="selectpatch">
+          <select class="form-control col-4 mr-2" id="selectpatch" (change)="onSelectPatchname($event.target)">
             <option *ngFor="let patch of patchfiles | async" [value]="patch">{{patch}}</option>
           </select>
-          <button class="btn btn-primary col-2">Load</button>
+          <button class="btn btn-primary col-2" (click)="onLoadPatch()">Load</button>
         </div>
-      </form>
+      </div>
       <br/>
       <h4>Control Change</h4>
       <div class="row" *ngFor="let control of ctx; let idx2=index">
@@ -62,6 +69,9 @@ export class OutputComponent {
   testNote = 46;
   playing = false;
   patchfiles: Observable<string[]>;
+  currentPatch = '';
+  patchname = '';
+  controlParameters: {[index: number]: IControlParameter} = {};
 
   constructor(private midiService: WebmidiService, private patchService: PatchfileService) {
     this.output = midiService.currentOutput;
@@ -78,7 +88,6 @@ export class OutputComponent {
       }
 
       this.testNote = parseInt(target.value, 10);
-
       output.playNote(this.testNote, 1);
       this.playing = true;
     });
@@ -95,8 +104,35 @@ export class OutputComponent {
 
   onChangeControl(controlIdx: number, value) {
     let control = this.ctx[controlIdx].key;
+    this.controlParameters[controlIdx] = {index: control, value:  parseInt(value.value, 10)};
+
+    if (this.output.pipe(isEmpty())) {
+      return;
+    }
+
     this.output.subscribe(output => {
       output.sendControlChange(control, value.value, 1);
     });
+  }
+
+  updatePatchName(value: string) {
+    this.patchname = value;
+  }
+
+  onSelectPatchname(target) {
+    this.currentPatch = target.value;
+  }
+
+  onLoadPatch() {
+
+  }
+
+  onSavePatch() {
+    if (!this.patchname) {
+      return;
+    }
+
+    let patch = JSON.stringify({patchname: this.patchname, data: this.controlParameters });
+    this.patchService.savePatchFile(patch);
   }
  }
