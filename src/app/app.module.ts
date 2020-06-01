@@ -12,7 +12,7 @@ import {EmptyComponent} from "./empty.component";
 import {HttpClientModule} from "@angular/common/http";
 
 const routes: Routes = [
-  {path: '', redirectTo: '/info', pathMatch: 'full'},
+  {path: '', redirectTo: '/output', pathMatch: 'full'},
   {path: 'info', component: EmptyComponent},
   {path: 'input', component: InputComponent},
   {path: 'output', component: OutputComponent}

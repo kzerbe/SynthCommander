@@ -20,13 +20,13 @@ import {Output} from "webmidi";
       <nav class="navbar navbar-expand-sm bg-light">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" routerLink="info">Info</a>
+            <a class="nav-link" routerLink="info" routerLinkActive="active">Info</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="input">Monitor MIDI input</a>
+            <a class="nav-link" routerLink="input" routerLinkActive="active">Monitor MIDI input</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="output">Control MIDI output</a>
+            <a class="nav-link" routerLink="output" routerLinkActive="active">Control MIDI output</a>
           </li>
         </ul>
       </nav>

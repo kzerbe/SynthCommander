@@ -23,7 +23,7 @@ export class WebmidiService {
       let msg = '';
       if (err) {
         msg = err.message;
-      } else if (WebMidi.outputs.length < 2) {
+      } else if (WebMidi.outputs.length < 1) {
         msg = 'no MIDI out devices attached.';
       } else {
         this.inputs.next(WebMidi.inputs);
