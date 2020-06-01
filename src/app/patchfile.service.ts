@@ -24,11 +24,8 @@ export class PatchfileService {
     constructor(private http: HttpClient) {
     }
 
-    getPatchfiles() {
-        this.http.get<string[]>('api/list').subscribe(patt => {
-            this.patchfiles.next(patt)
-        })
-        return this.patchfiles;
+    getPatchfiles():Observable<string[]> {
+        return this.http.get<string[]>('api/list')
     }
 
     savePatchFile(patch: IPatchDefinition) {

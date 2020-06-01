@@ -1,5 +1,4 @@
 import {Component, Directive, HostListener, OnInit} from '@angular/core';
-import {Observable} from "rxjs";
 
 import {controls} from "./controlModel";
 import {Output} from "webmidi";
@@ -39,7 +38,7 @@ export class SliderMoveDirective {
       <div class="form-group row">
         <label class="col-form-label col-2 text-right" for="selectpatch">select patch</label>
         <select class="form-control col-4 mr-2" id="selectpatch" (change)="onSelectPatchname($event)">
-          <option *ngFor="let patch of patchfiles | async" [value]="patch">{{patch}}</option>
+          <option *ngFor="let patch of patchfiles" [value]="patch">{{patch}}</option>
         </select>
         <button class="btn btn-primary col-2" (click)="onLoadPatch()">Load</button>
       </div>
@@ -60,17 +59,15 @@ export class OutputComponent implements OnInit {
   controlValues: number[] = [];
 
   output: Output;
-  hasOutput = false;
   error = '';
   testNote = 46;
   playing = false;
-  patchfiles: Observable<string[]>;
+  patchfiles: string[] = [];
   currentPatch = '';
   patchname = '';
   controlParameters: {[index: number]: IControlParameter} = {};
 
   constructor(private midiService: WebmidiService, private patchService: PatchfileService) {
-    this.patchfiles = patchService.getPatchfiles();
     for(let c in controls) {
       this.controlValues.push(0);
     }
@@ -78,34 +75,46 @@ export class OutputComponent implements OnInit {
 
   ngOnInit()
   {
+   this.patchService.getPatchfiles().subscribe(patchnames => {
+     this.patchfiles = patchnames;
+     if (this.patchfiles.length && !this.currentPatch) {
+       this.currentPatch = this.patchfiles[0];
+     }
+   });
+
    this.midiService.currentOutput.subscribe(output => this.output=output);
   }
 
   onNoteChange(event: Event) {
-    if (this.playing) {
+    if (this.playing && this.output) {
       this.output.stopNote(this.testNote, 1);
     }
 
-    this.testNote = parseInt((event.target as HTMLInputElement).value, 10);
-    this.output.playNote(this.testNote, 1);
-    this.playing = true;
+    if (this.output) {
+      this.testNote = parseInt((event.target as HTMLInputElement).value, 10);
+      this.output.playNote(this.testNote, 1);
+      this.playing = true;
+    }
   }
 
   onMute() {
-    if (this.playing) {
+    if (this.playing && this.output) {
       this.output.stopNote(this.testNote, 1);
       this.playing = false;
     }
   }
 
-  onChangeControl(controlIdx: number, value) {
+  onChangeControl(controlIdx: number, event: Event) {
+    const value = parseInt((event.target as HTMLInputElement).value, 10);
     let control = this.ctx[controlIdx].key;
     this.controlParameters[controlIdx] = {
       index: controlIdx,
       parameterId: control,
-      value:  parseInt(value.value, 10)};
+      value:  value};
 
-      this.output.sendControlChange(control, value.value, 1);
+    if (this.output) {
+      this.output.sendControlChange(control, value, 1);
+    }
   }
 
   updatePatchName(event: Event) {
@@ -120,11 +129,21 @@ export class OutputComponent implements OnInit {
     if(!this.currentPatch) {
       return;
     }
+    const output = this.output;
 
     this.patchService.loadPatchFile(this.currentPatch).subscribe(patch => {
+      for(let paramIdx=0; paramIdx < this.controlValues.length; ++paramIdx) {
+        this.controlValues[paramIdx] = 0;
+        if(output) {
+          output.sendControlChange(paramIdx, 0, 1);
+        }
+      }
       for (let cp  of patch.data) {
         this.controlValues[cp.index] = cp.value;
-        this.output.sendControlChange(cp.parameterId, cp.value, 1);
+
+        if(output) {
+          output.sendControlChange(cp.parameterId, cp.value, 1);
+        }
       }
     });
   }
