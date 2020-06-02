@@ -24,7 +24,7 @@ const routes: Routes = [
     EmptyComponent
   ],
   imports: [
-    BrowserModule, RouterModule.forRoot(routes), HttpClientModule
+    BrowserModule, RouterModule.forRoot(routes,{useHash: true}), HttpClientModule
   ],
   providers: [{provide: WebmidiService}, {provide: PatchfileService}],
   bootstrap: [AppComponent]

@@ -158,5 +158,6 @@ export class OutputComponent implements OnInit {
       patch.data.push(parameter);
     }
     this.patchService.savePatchFile(patch);
+    this.patchfiles.push(this.patchname);
   }
  }

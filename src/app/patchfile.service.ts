@@ -29,7 +29,6 @@ export class PatchfileService {
     }
 
     savePatchFile(patch: IPatchDefinition) {
-        console.log(patch);
         this.http.post<IPatchDefinition>('api/store', patch).subscribe(result => {
             console.log(result);
         });
