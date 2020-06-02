@@ -28,6 +28,9 @@ export class WebmidiService {
       } else {
         this.inputs.next(WebMidi.inputs);
         this.outputs.next(WebMidi.outputs);
+        if(WebMidi.outputs.length == 1) {
+          this.setOutput(0);
+        }
         this.handleEvents();
       }
       this.error.next(msg);
