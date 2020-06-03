@@ -3,35 +3,70 @@ const port = 8008;
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('file-system');
+const YAML = require('yaml');
 
-const app= express();
+const app = express();
 
 app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-let patchDir = __dirname + '/patches';
+const patchDir = __dirname + '/patches';
+const modelDir = __dirname + '/public';
 
 app.get('/api/list', (request, response) => {
   fs.readdir(patchDir, (err, files) => {
-    if(err) {
+    if (err) {
       response.send(`patch listing failed: ${err.message}`)
     }
-    let patches = files.map(fn => {
+    const patches = files.map(fn => {
       return fn.substring(0, fn.lastIndexOf('.'))
     });
-    let list = JSON.stringify(patches);
-    response.send(list);
+
+    response.send(JSON.stringify(patches));
   });
 });
 
+app.get('/api/model', (request, response) => {
+  const modelname = request.query.model;
+  if (!modelname) {
+    response.status(404).send('missing model name');
+    return;
+  }
+
+  let isYaml = false;
+  let filename = `${modelDir}/${modelname}.yaml`;
+
+  if (fs.existsSync(filename)) {
+    isYaml = true;
+  } else {
+    filename = `${modelDir}/${modelname}.json`;
+  }
+
+  if (!fs.existsSync(filename)) {
+    response.status(404).send('model file not found');
+    return;
+  }
+
+  let jsdata;
+  if (isYaml) {
+    let data = fs.readFileSync(filename, 'utf-8');
+    jsdata =YAML.parse(data);
+  } else {
+    let data = fs.readFileSync(filename, 'utf-8');
+    jsdata = JSON.parse(data);
+  }
+  response.status(200).send(jsdata);
+});
+
 app.get('/api/load', (request, response) => {
-  let patchname = request.query.name;
+  const patchname = request.query.name;
   if (!patchname) {
     response.status(404).send('patch name missing');
     return;
   }
-  let filename = `${patchDir}/${patchname}.json`;
+
+  const filename = `${patchDir}/${patchname}.json`;
   fs.readFile(filename, (err, data) => {
     if (err) {
       response.status(404).send('patch file not found');
@@ -43,14 +78,14 @@ app.get('/api/load', (request, response) => {
 
 app.post('/api/store', (request, response) => {
   let msg = 'Ok';
-  let patchname = request.body.patchname;
+  const patchname = request.body.patchname;
   if (!!patchname) {
-    let filename = `${patchDir}/${patchname}.json`;
-    let patch = JSON.stringify(request.body);
+    const filename = `${patchDir}/${patchname}.json`;
+    const patch = JSON.stringify(request.body);
     fs.writeFile(filename, patch, (err) => {
-        if (err) {
-          msg = `can't store patch: ${err.message}`;
-        }
+      if (err) {
+        msg = `can't store patch: ${err.message}`;
+      }
     });
   } else {
     msg = 'patchname is missing';
