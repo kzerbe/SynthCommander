@@ -33,14 +33,14 @@ export class SliderMoveDirective {
       <div class="form-group row">
         <label class="col-form-label col-2 text-right" for="patchname">new patchname</label>
         <input type="text" class="form-control col-4 mr-2" id="patchname" (input)="updatePatchName($event)"/>
-        <button class="btn btn-primary col-2 btn-sm" (click)="onSavePatch2()">Save</button>
+        <button class="btn btn-primary col-2 btn-sm" (click)="onSavePatch()">Save</button>
       </div>
       <div class="form-group row">
         <label class="col-form-label col-2 text-right" for="selectpatch">select patch</label>
         <select class="form-control col-4 mr-2" id="selectpatch" (change)="onSelectPatchname($event)">
           <option *ngFor="let patch of patchfiles" [value]="patch">{{patch}}</option>
         </select>
-        <button class="btn btn-primary col-2" (click)="onloadPatch2()">Load</button>
+        <button class="btn btn-primary col-2" (click)="onloadPatch()">Load</button>
       </div>
     </div>
     <hr/>
@@ -145,15 +145,16 @@ export class OutputComponent implements OnInit {
     this.currentPatch = (event.target as HTMLSelectElement).value;
   }
 
-  onloadPatch2() {
+  onloadPatch() {
     if (!this.currentPatch) {
       return;
     }
     const output = this.output;
 
     this.patchService.loadPatchFile(this.currentPatch).subscribe(patch => {
-      for (let paramIdx = 0; paramIdx < this.ccAttr.length; ++paramIdx) {
-        this.ccAttr[paramIdx] = 0;
+      const count = Object.keys(this.ccAttr).length;
+      for (let paramIdx = 0; paramIdx < count; ++paramIdx) {
+        this.ccAttr[paramIdx].value = 0;
         if (output) {
           output.sendControlChange(this.ccAttr[paramIdx].key, 0, 1);
         }
@@ -168,7 +169,7 @@ export class OutputComponent implements OnInit {
     });
   }
 
-  onSavePatch2() {
+  onSavePatch() {
     if (!this.patchname) {
       return;
     }
