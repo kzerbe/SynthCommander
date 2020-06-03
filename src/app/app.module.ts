@@ -4,6 +4,7 @@ import {NgModule} from '@angular/core';
 
 import {WebmidiService} from "./webmidi.service";
 import {PatchfileService} from "./patchfile.service";
+import {SynthmodelService} from "./synthmodel.service";
 
 import {AppComponent} from './app.component';
 import {OutputComponent, SliderMoveDirective} from "./output.component";
@@ -26,7 +27,7 @@ const routes: Routes = [
   imports: [
     BrowserModule, RouterModule.forRoot(routes,{useHash: true}), HttpClientModule
   ],
-  providers: [{provide: WebmidiService}, {provide: PatchfileService}],
+  providers: [{provide: WebmidiService}, {provide: PatchfileService}, {provide: SynthmodelService}],
   bootstrap: [AppComponent]
 })
 export class AppModule {

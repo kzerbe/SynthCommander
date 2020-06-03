@@ -1,19 +1,12 @@
 import {Injectable} from "@angular/core";
 import {BehaviorSubject, Observable} from "rxjs";
 import {HttpClient, HttpParams} from "@angular/common/http";
-
-
-export interface IControlParameter {
-    index: number;
-    parameterId: number;
-    value: number;
-}
+import {ICCMessageInterface} from "./synthmodel.service";
 
 export interface IPatchDefinition {
     patchname: string;
-    data: IControlParameter[];
+    data: ICCMessageInterface[];
 }
-
 
 @Injectable({
     providedIn: 'root'
