@@ -11,11 +11,13 @@ import {ICCGroupInterface, ICCMessageInterface, SynthmodelService} from "./synth
       <h3>MIDI Input Monitor</h3>
       <br>
       <h4>Control Change Messages</h4>
-      <div *ngFor="let ccgroup of synthModel; let ccIdx1=index">
-        <h5>{{synthModel[ccIdx1].name}}</h5>
-        <div *ngFor="let ccAttr of synthModel[ccIdx1].ccm; let ccIdx2=index">
-          <span class="col-2">{{item(ccIdx1, ccIdx2).attr}}</span>
-          <span class="col-1">{{item(ccIdx1, ccIdx2).value}}</span>
+      <div class="list-group d-flex flex-row">
+        <div *ngFor="let ccgroup of synthModel; let ccIdx1=index" class="p-2">
+          <h5>{{synthModel[ccIdx1].name}}</h5>
+          <div *ngFor="let ccAttr of synthModel[ccIdx1].ccm; let ccIdx2=index">
+            <span>{{item(ccIdx1, ccIdx2).attr}}</span>&nbsp;
+            <span>{{item(ccIdx1, ccIdx2).value}}</span>
+          </div>
         </div>
       </div>
     </div>
