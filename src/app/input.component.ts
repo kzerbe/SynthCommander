@@ -1,68 +1,61 @@
 import {ChangeDetectorRef, Component, DoCheck, OnInit} from "@angular/core";
 
-import {controls} from "./controlModel";
 import {WebmidiService} from "./webmidi.service";
+import {ICCGroupInterface, ICCMessageInterface, SynthmodelService} from "./synthmodel.service";
 
 @Component({
   selector: 'app-input',
   template: `
     <div>
-      <br>
+      <hr>
       <h3>MIDI Input Monitor</h3>
       <br>
       <h4>Control Change Messages</h4>
-      <table class="table">
-        <thead class="table-dark">
-        <tr>
-          <th scope="col">Id</th>
-          <th scope="col">Module</th>
-          <th scope="col">Parameter</th>
-          <th scope="col">Value</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let control of ctx; let idx=index">
-          <td>{{control.key}}</td>
-          <td>{{control.mod}}</td>
-          <td>{{control.attr}}</td>
-          <td>
-            <span [textContent]="[controlValues[idx]]"></span>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+      <div *ngFor="let ccgroup of synthModel; let ccIdx1=index">
+        <h5>{{synthModel[ccIdx1].name}}</h5>
+        <div *ngFor="let ccAttr of synthModel[ccIdx1].ccm; let ccIdx2=index">
+          <span class="col-2">{{item(ccIdx1, ccIdx2).attr}}</span>
+          <span class="col-1">{{item(ccIdx1, ccIdx2).value}}</span>
+        </div>
+      </div>
     </div>
   `,
   styles: []
 })
 export class InputComponent implements OnInit, DoCheck {
-  ctx = controls;
-  controlValues: number[] = [];
+  synthModel: ICCGroupInterface[] = [];
+  ccAttr: any = [];
 
-  constructor(private midiService: WebmidiService, private cdr: ChangeDetectorRef) {
+  constructor(private midiService: WebmidiService, private synthmodelService: SynthmodelService,
+              private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit() {
-    for (let c in controls) {
-      this.controlValues.push(0);
-    }
-
     this.midiService.controlChanges.subscribe(chg => {
       if (!chg) {
         return;
       }
 
-      let idx = controls.findIndex(ctl => {
-        return ctl.key === chg.control;
-      });
-
-      if (idx !== -1) {
-        let newValues = this.controlValues;
-        newValues[idx] = chg.value;
-        this.controlValues = newValues;
-        this.cdr.detectChanges();
+      for (let group of this.synthModel) {
+        for (let attr of group.ccm) {
+          if (attr.key === chg.control) {
+            this.ccAttr[attr.itemId].value = chg.value
+            this.cdr.detectChanges();
+          }
+        }
       }
     });
+
+    this.synthmodelService.model.subscribe(model => this.synthModel = model);
+    this.synthmodelService.loadModel('nts-1').subscribe(controls => this.ccAttr = controls);
+  }
+
+  itemIndex(groupIdx: number, attrIndex: number): number {
+    return this.synthModel[groupIdx].ccm[attrIndex].itemId;
+  }
+
+  item(groupIdx: number, attrIndex: number): ICCMessageInterface {
+    return this.ccAttr[this.itemIndex(groupIdx, attrIndex)];
   }
 
   ngDoCheck() {

@@ -2,6 +2,8 @@ import {Injectable} from "@angular/core";
 import WebMidi, {Input, Output} from 'webmidi';
 import {BehaviorSubject} from "rxjs";
 
+const noOutputErr = 'please select device first';
+
 export class ControlChangeMessage {
   control: number;
   value: number;
@@ -14,9 +16,9 @@ export class WebmidiService {
   error = new BehaviorSubject<string>('');
   inputs = new BehaviorSubject<Input[]>(null);
   outputs = new BehaviorSubject<Output[]>(null);
-  currentInput = new BehaviorSubject<Input>(null);
-  currentOutput = new BehaviorSubject<Output|null>(null);
   controlChanges = new BehaviorSubject<ControlChangeMessage>(null);
+  input: Input = null;
+  output: Output = null;
 
   constructor() {
     WebMidi.enable(err => {
@@ -39,26 +41,62 @@ export class WebmidiService {
 
   setInput(index: number) {
     this.inputs.subscribe(inputs => {
-      this.currentInput.next(inputs[index]);
+      this.input = inputs[index];
+      this.handleEvents();
     });
   }
 
   setOutput(index: number) {
     this.outputs.subscribe(outputs => {
-      this.currentOutput.next(outputs[index]);
+      this.output = outputs[index];
     });
   }
 
+  setControl(key: number, value: number) {
+    if (!this.output) {
+      this.error.next(noOutputErr);
+      return
+    }
+    try {
+      this.output.sendControlChange(key, value, 1);
+    } catch (e) {
+      this.error.next(e.message);
+    }
+  }
+
+  playNote(note: number) {
+    if (!this.output) {
+      this.error.next(noOutputErr);
+      return
+    }
+    try {
+      this.output.playNote(note, 1);
+    } catch(e) {
+      this.error.next(e.message);
+    }
+  }
+
+  stopNote(note: number) {
+    if (!this.output) {
+      this.error.next(noOutputErr);
+      return
+    }
+    try {
+      this.output.stopNote(note, 1);
+    } catch(e) {
+      this.error.next(e.message);
+    }
+  }
+
   handleEvents() {
-    this.currentInput.subscribe(input => {
-      if (!input) {
-        return;
-      }
-      input.addListener('controlchange', 1, (e) => {
-        let control = e.controller.number;
-        let value = e.value;
-        this.controlChanges.next({control: control, value: value});
-      });
-    })
+    if (!this.input) {
+      this.error.next(noOutputErr);
+      return
+    }
+    this.input.addListener('controlchange', 1, (e) => {
+      let control = e.controller.number;
+      let value = e.value;
+      this.controlChanges.next({control: control, value: value});
+    });
   }
 }

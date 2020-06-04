@@ -1,6 +1,5 @@
 import {Component, Directive, HostListener, OnInit} from '@angular/core';
 
-import {Output} from "webmidi";
 import {WebmidiService} from "./webmidi.service";
 import {PatchfileService} from "./patchfile.service";
 import {ICCGroupInterface, ICCMessageInterface, SynthmodelService} from "./synthmodel.service";
@@ -19,7 +18,6 @@ export class SliderMoveDirective {
 @Component({
   selector: 'app-output',
   template: `
-    <div *ngIf="!!error" class="alert alert-info" [textContent]="error"></div>
     <h4>Tone selection</h4>
     <div class="row">
       <input type="range" class="col-9" min="46" max="92" [value]="testNote"
@@ -61,10 +59,9 @@ export class OutputComponent implements OnInit {
   synthModel: ICCGroupInterface[] = [];
   ccAttr: any;
 
-  output: Output;
-  error = '';
   testNote = 46;
   playing = false;
+
   patchfiles: string[] = [];
   currentPatch = '';
   patchname = '';
@@ -81,24 +78,8 @@ export class OutputComponent implements OnInit {
       }
     });
 
-    this.midiService.currentOutput.subscribe(output => {
-      this.output = output;
-      if (!this.output) {
-        return;
-      }
-
-      this.synthmodelService.loadModelFile('nts-1').subscribe(model => {
-        this.synthModel = model;
-        let itemId = 0;
-        this.ccAttr = {};
-        for (let group of this.synthModel) {
-          for (let attr of group.ccm) {
-            this.ccAttr[itemId] = attr;
-            attr.itemId = itemId++;
-          }
-        }
-      });
-    });
+    this.synthmodelService.model.subscribe(model => this.synthModel = model);
+    this.synthmodelService.loadModel('nts-1').subscribe(controls => this.ccAttr = controls);
   }
 
   itemIndex(groupIdx: number, attrIndex: number): number {
@@ -110,20 +91,18 @@ export class OutputComponent implements OnInit {
   }
 
   onNoteChange(event: Event) {
-    if (this.playing && this.output) {
-      this.output.stopNote(this.testNote, 1);
+    if (this.playing) {
+      this.midiService.stopNote(this.testNote);
     }
 
-    if (this.output) {
-      this.testNote = parseInt((event.target as HTMLInputElement).value, 10);
-      this.output.playNote(this.testNote, 1);
-      this.playing = true;
-    }
+    this.testNote = parseInt((event.target as HTMLInputElement).value, 10);
+    this.midiService.playNote(this.testNote);
+    this.playing = true;
   }
 
   onMute() {
-    if (this.playing && this.output) {
-      this.output.stopNote(this.testNote, 1);
+    if (this.playing) {
+      this.midiService.stopNote(this.testNote);
       this.playing = false;
     }
   }
@@ -132,9 +111,7 @@ export class OutputComponent implements OnInit {
     const value = parseInt((event.target as HTMLInputElement).value, 10);
     const ccm = this.ccAttr[controlIdx];
     ccm.value = value;
-    if (this.output) {
-      this.output.sendControlChange(ccm.key, ccm.value, 1);
-    }
+    this.midiService.setControl(ccm.key, ccm.value);
   }
 
   updatePatchName(event: Event) {
@@ -149,22 +126,17 @@ export class OutputComponent implements OnInit {
     if (!this.currentPatch) {
       return;
     }
-    const output = this.output;
 
     this.patchService.loadPatchFile(this.currentPatch).subscribe(patch => {
       const count = Object.keys(this.ccAttr).length;
       for (let paramIdx = 0; paramIdx < count; ++paramIdx) {
         this.ccAttr[paramIdx].value = 0;
-        if (output) {
-          output.sendControlChange(this.ccAttr[paramIdx].key, 0, 1);
-        }
+          this.midiService.setControl(this.ccAttr[paramIdx].key, 0);
       }
 
       for (let cp of patch.data) {
         this.ccAttr[cp.itemId] = cp;
-        if (output) {
-          output.sendControlChange(cp.key, cp.value, 1);
-        }
+        this.midiService.setControl(cp.key, cp.value);
       }
     });
   }
