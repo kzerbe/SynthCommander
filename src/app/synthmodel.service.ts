@@ -25,6 +25,10 @@ export class SynthmodelService {
   constructor(private http: HttpClient) {
   }
 
+  listModels() {
+    return this.http.get<string[]>('api/listmodels');
+  }
+
   loadModel(synthmodel: string): Observable<any> {
     const params = new HttpParams().set('model', synthmodel);
     let ccAttr = {};

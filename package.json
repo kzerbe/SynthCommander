@@ -1,6 +1,7 @@
 {
-  "name": "synth-tool",
-  "version": "0.0.0",
+  "name": "synthcommander",
+  "description": "Change Control tool for MIDI synthesizers (server)",
+  "version": "0.3.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",

@@ -27,6 +27,12 @@ app.get('/api/list', (request, response) => {
   });
 });
 
+app.get('/api/listmodels', (request, response) => {
+  fs.readdir(modelDir, (err, files) => {
+    response.status(200).send(files.filter(name => name.endsWith('.yaml') || name.endsWith('json')));
+  });
+});
+
 app.get('/api/model', (request, response) => {
   const modelname = request.query.model;
   if (!modelname) {
@@ -34,15 +40,16 @@ app.get('/api/model', (request, response) => {
     return;
   }
 
-  let isYaml = false;
+  let isYaml = modelname.endsWith('.yaml');
+  /*
   let filename = `${modelDir}/${modelname}.yaml`;
 
   if (fs.existsSync(filename)) {
     isYaml = true;
   } else {
     filename = `${modelDir}/${modelname}.json`;
-  }
-
+  }*/
+  filename = `${modelDir}/${modelname}`
   if (!fs.existsSync(filename)) {
     response.status(404).send('model file not found');
     return;

@@ -49,7 +49,7 @@ export class InputComponent implements OnInit, DoCheck {
     });
 
     this.synthmodelService.model.subscribe(model => this.synthModel = model);
-    this.synthmodelService.loadModel('nts-1').subscribe(controls => this.ccAttr = controls);
+    this.synthmodelService.loadModel('nts-1.yaml').subscribe(controls => this.ccAttr = controls);
   }
 
   itemIndex(groupIdx: number, attrIndex: number): number {

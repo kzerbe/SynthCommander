@@ -1,0 +1,65 @@
+#Korg Volca Keys CC Messages
+---
+- id: VCO
+  name: Oscillator
+  ccm:
+    - attr: portamento
+      key: 5
+      value: 0
+    - attr: expression
+      key: 11
+      value: 0
+    - attr: voice
+      key: 40
+      value: 0
+    - attr: octave
+      key: 41
+      value: 0
+    - attr: detune
+      key: 42
+      value: 0
+    - attr: vco eg int
+      key: 43
+      value: 0
+- id: VCF
+  name: filter
+  ccm:
+    - attr: cutoff
+      key: 44
+      value: 0
+    - attr: vcf eg int
+      key: 45
+      value: 0
+- id: LFO
+  name: LFO
+  ccm:
+    - attr: rate
+      key: 46
+      value: 0
+    - attr: pitch
+      key: 47
+      value: 0
+    - attr: cutoff
+      key: 48
+      value: 0
+- id: EG
+  name: Envelope
+  ccm:
+    - attr: attack
+      key: 49
+      value: 0
+    - attr: decay/release
+      key: 50
+      value: 0
+    - attr: sustain
+      key: 51
+      value: 0
+- id: DELAY
+  name: Delay
+  ccm:
+    - attr: time
+      key: 52
+      value: 0
+    - attr: feedback
+      key: 53
+      value: 0
