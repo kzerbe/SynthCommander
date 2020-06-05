@@ -12,7 +12,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 const patchDir = __dirname + '/patches';
-const modelDir = __dirname + '/public';
+const modelDir = __dirname + '/public/assets';
+fs.mkdir(patchDir);
+
 
 app.get('/api/list', (request, response) => {
   fs.readdir(patchDir, (err, files) => {
@@ -41,14 +43,6 @@ app.get('/api/model', (request, response) => {
   }
 
   let isYaml = modelname.endsWith('.yaml');
-  /*
-  let filename = `${modelDir}/${modelname}.yaml`;
-
-  if (fs.existsSync(filename)) {
-    isYaml = true;
-  } else {
-    filename = `${modelDir}/${modelname}.json`;
-  }*/
   filename = `${modelDir}/${modelname}`
   if (!fs.existsSync(filename)) {
     response.status(404).send('model file not found');

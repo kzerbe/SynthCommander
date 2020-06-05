@@ -1,0 +1,50 @@
+#Korg Volca fm Messages
+---
+- id: VCO
+  name: Oscillators
+  ccm:
+    - attr: transpose octave
+      key: 40
+      value: 0
+    - attr: velocity
+      key: 41
+      value: 0
+    - attr: algorithm
+      key: 48
+      value: 0
+- id: CAR
+  name: FM Carrier
+  ccm:
+    - attr: attack
+      key: 44
+      value: 0
+    - attr: decay
+      key: 45
+      value: 0
+- id: MOD
+  name: Modulator
+  ccm:
+    - attr: attack
+      key: 42
+      value: 0
+    - attr: decay
+      key: 43
+      value: 0
+- id: LFO
+  name: LFO
+  ccm:
+    - attr: rate
+      key: 46
+      value: 0
+    - attr: pitch depth
+      key: 47
+      value: 0
+- id: ARP
+  name: Arpeggio
+  ccm:
+    - attr: type
+      key: 49
+      value: 0
+    - attr: div
+      key: 50
+      value: 0
