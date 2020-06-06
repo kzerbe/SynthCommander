@@ -18,38 +18,40 @@ export class SliderMoveDirective {
 @Component({
   selector: 'app-output',
   template: `
-    <h4>Tone selection</h4>
-    <div class="row">
-      <input type="range" class="col-9" min="46" max="92" [value]="testNote"
-             (input)="onNoteChange($event)" slidermove>
-      <span class="col-1">{{testNote}}</span>
-      <button [disabled]="!playing" class="btn btn-primary col-2" (click)="onMute()">mute</button>
-    </div>
-    <hr/>
-    <h4>Patch Storage</h4>
-    <div class="form">
-      <div class="form-group row">
-        <label class="col-form-label col-2 text-right" for="patchname">new patchname</label>
-        <input type="text" class="form-control col-4 mr-2" id="patchname" (input)="updatePatchName($event)"/>
-        <button class="btn btn-primary col-2 btn-sm" (click)="onSavePatch()">Save</button>
+    <div *ngIf="synthModel">
+      <h4>Tone selection</h4>
+      <div class="row">
+        <input type="range" class="col-9" min="46" max="92" [value]="testNote"
+               (input)="onNoteChange($event)" slidermove>
+        <span class="col-1">{{testNote}}</span>
+        <button [disabled]="!playing" class="btn btn-primary col-2" (click)="onMute()">mute</button>
       </div>
-      <div class="form-group row">
-        <label class="col-form-label col-2 text-right" for="selectpatch">select patch</label>
-        <select class="form-control col-4 mr-2" id="selectpatch" (change)="onSelectPatchname($event)">
-          <option *ngFor="let patch of patchfiles" [value]="patch">{{patch}}</option>
-        </select>
-        <button class="btn btn-primary col-2" (click)="onloadPatch()">Load</button>
+      <hr/>
+      <h4>Patch Storage</h4>
+      <div class="form">
+        <div class="form-group row">
+          <label class="col-form-label col-2 text-right" for="patchname">new patchname</label>
+          <input type="text" class="form-control col-4 mr-2" id="patchname" (input)="updatePatchName($event)"/>
+          <button class="btn btn-primary col-2 btn-sm" (click)="onSavePatch()">Save</button>
+        </div>
+        <div class="form-group row">
+          <label class="col-form-label col-2 text-right" for="selectpatch">select patch</label>
+          <select class="form-control col-4 mr-2" id="selectpatch" (change)="onSelectPatchname($event)">
+            <option *ngFor="let patch of patchfiles" [value]="patch">{{patch}}</option>
+          </select>
+          <button class="btn btn-primary col-2" (click)="onloadPatch()">Load</button>
+        </div>
       </div>
-    </div>
-    <hr/>
-    <h4>Control Change</h4>
-    <div *ngFor="let ccgroup of synthModel; let ccIdx1=index">
-      <h5>{{synthModel[ccIdx1].name}}</h5>
-      <div *ngFor="let ccAttr of synthModel[ccIdx1].ccm; let ccIdx2=index">
-        <label for=cc{{ccIdx2}} class="col-2" >{{item(ccIdx1, ccIdx2).attr}}</label>
-        <input type="range" id=rv{{idx2}} class="col-4" min="0" max="127"
-               [value]="item(ccIdx1, ccIdx2).value" (input)="onChangeControl2(itemIndex(ccIdx1, ccIdx2), $event)" slidermove>
-        <span [textContent]="item(ccIdx1, ccIdx2).value" class="col-1">0</span>
+      <hr/>
+      <h4>Control Change</h4>
+      <div *ngFor="let ccgroup of synthModel; let ccIdx1=index">
+        <h5>{{synthModel[ccIdx1].name}}</h5>
+        <div *ngFor="let ccAttr of synthModel[ccIdx1].ccm; let ccIdx2=index">
+          <label for=cc{{ccIdx2}} class="col-2" >{{item(ccIdx1, ccIdx2).attr}}</label>
+          <input type="range" id=rv{{idx2}} class="col-4" min="0" max="127"
+                 [value]="item(ccIdx1, ccIdx2).value" (input)="onChangeControl2(itemIndex(ccIdx1, ccIdx2), $event)" slidermove>
+          <span [textContent]="item(ccIdx1, ccIdx2).value" class="col-1">0</span>
+        </div>
       </div>
     </div>
   `,

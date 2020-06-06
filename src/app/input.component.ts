@@ -8,9 +8,11 @@ import {ICCGroupInterface, ICCMessageInterface, SynthmodelService} from "./synth
   template: `
     <div>
       <hr>
-      <h3>MIDI Input Monitor</h3>
-      <br>
-      <h4>Control Change Messages</h4>
+      <div *ngIf="synthModel">
+        <h3>MIDI Input Monitor</h3>
+        <br>
+        <h4>Control Change Messages</h4>
+      </div>
       <div class="list-group d-flex flex-row">
         <div *ngFor="let ccgroup of synthModel; let ccIdx1=index" class="p-2">
           <h5>{{synthModel[ccIdx1].name}}</h5>
