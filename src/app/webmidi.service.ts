@@ -40,15 +40,15 @@ export class WebmidiService {
   }
 
   setInput(index: number) {
-    this.inputs$.subscribe(inputs$ => {
-      this.input = inputs$[index];
+    this.inputs$.subscribe(inputs => {
+      this.input = inputs[index];
       this.handleEvents();
     });
   }
 
   setOutput(index: number) {
-    this.outputs$.subscribe(outputs$ => {
-      this.output = outputs$[index];
+    this.outputs$.subscribe(outputs => {
+      this.output = outputs[index];
     });
   }
 

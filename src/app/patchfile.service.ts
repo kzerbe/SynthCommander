@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {BehaviorSubject, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {ICCMessageInterface} from "./synthmodel.service";
 
@@ -12,8 +12,6 @@ export interface IPatchDefinition {
     providedIn: 'root'
 })
 export class PatchfileService {
-    patchfiles$ = new BehaviorSubject<string[]>(null);
-
     constructor(private http: HttpClient) {
     }
 
@@ -22,9 +20,7 @@ export class PatchfileService {
     }
 
     savePatchFile(patch: IPatchDefinition) {
-        this.http.post<IPatchDefinition>('api/store', patch).subscribe(result => {
-            console.log(result);
-        });
+        this.http.post<IPatchDefinition>('api/store', patch);
     }
 
     loadPatchFile(patchname: string): Observable<IPatchDefinition> {
