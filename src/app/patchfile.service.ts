@@ -12,7 +12,7 @@ export interface IPatchDefinition {
     providedIn: 'root'
 })
 export class PatchfileService {
-    patchfiles = new BehaviorSubject<string[]>(null);
+    patchfiles$ = new BehaviorSubject<string[]>(null);
 
     constructor(private http: HttpClient) {
     }

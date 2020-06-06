@@ -19,8 +19,8 @@ export interface ICCGroupInterface {
   providedIn: 'root'
 })
 export class SynthmodelService {
-  model = new BehaviorSubject<ICCGroupInterface[]>(null);
-  controls = new BehaviorSubject<any>(null);
+  model$ = new BehaviorSubject<ICCGroupInterface[]>(null);
+  controls$ = new BehaviorSubject<any>(null);
 
   constructor(private http: HttpClient) {
   }
@@ -33,17 +33,17 @@ export class SynthmodelService {
     const params = new HttpParams().set('model', synthmodel);
     let ccAttr = {};
 
-    this.http.get<ICCGroupInterface[]>('api/model', {params: params}).subscribe(model => {
-      this.model.next(model);
+    this.http.get<ICCGroupInterface[]>('api/model', {params: params}).subscribe(model$ => {
+      this.model$.next(model$);
       let itemId = 0;
-      for (let group of model) {
+      for (let group of model$) {
         for (let attr of group.ccm) {
           ccAttr[itemId] = attr;
           attr.itemId = itemId++;
         }
       }
-      this.controls.next(ccAttr);
+      this.controls$.next(ccAttr);
     });
-    return this.controls;
+    return this.controls$;
   }
 }

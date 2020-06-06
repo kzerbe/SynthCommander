@@ -17,8 +17,9 @@ import {SynthmodelService} from "./synthmodel.service";
           </select>
         </div>
         <div class="form-group col-4">
-          <label for="devicemodel">select MIDI device model</label>
+          <label for="devicemodel">synthesizer model</label>
           <select id="devicemodel" class="form-control" (change)="onModelChange($event.target)">
+            <option [value]="null">choose model</option>
             <option *ngFor="let model of models | async" value={{model}}>{{model}}</option>
           </select>
         </div>
@@ -52,9 +53,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.outputs = this.midiService.outputs;
+    this.outputs = this.midiService.outputs$;
     this.models = this.synthmodelService.listModels();
-    this.midiService.error.subscribe(err => this.error = err);
+    this.midiService.error$.subscribe(err => this.error = err);
   }
 
   onOutputChange(target: any) {

@@ -78,9 +78,8 @@ export class OutputComponent implements OnInit {
       }
     });
 
-    this.synthmodelService.model.subscribe(model => this.synthModel = model);
-    // this.synthmodelService.controls.subscribe(controls => this.ccAttr = controls);
-    this.synthmodelService.loadModel('volca_keys.yaml').subscribe(controls => this.ccAttr = controls);
+    this.synthmodelService.model$.subscribe(model => this.synthModel = model);
+    this.synthmodelService.controls$.subscribe(controls => this.ccAttr = controls);
   }
 
   itemIndex(groupIdx: number, attrIndex: number): number {
