@@ -35,7 +35,7 @@ export class InputComponent implements OnInit, DoCheck {
   }
 
   ngOnInit() {
-    this.midiService.controlChanges.subscribe(chg => {
+    this.midiService.controlChanges$.subscribe(chg => {
       if (!chg) {
         return;
       }

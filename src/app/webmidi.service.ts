@@ -16,7 +16,7 @@ export class WebmidiService {
   error$ = new BehaviorSubject<string>('');
   inputs$ = new BehaviorSubject<Input[]>(null);
   outputs$ = new BehaviorSubject<Output[]>(null);
-  controlChanges = new BehaviorSubject<ControlChangeMessage>(null);
+  controlChanges$ = new BehaviorSubject<ControlChangeMessage>(null);
   input: Input = null;
   output: Output = null;
 
@@ -96,7 +96,7 @@ export class WebmidiService {
     this.input.addListener('controlchange', 1, (e) => {
       let control = e.controller.number;
       let value = e.value;
-      this.controlChanges.next({control: control, value: value});
+      this.controlChanges$.next({control: control, value: value});
     });
   }
 }
