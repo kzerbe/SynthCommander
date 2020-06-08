@@ -25,7 +25,7 @@ export class SynthmodelService {
   constructor(private http: HttpClient) {
   }
 
-  listModels() {
+  listModels(): Observable<string[]> {
     return this.http.get<string[]>('api/listmodels');
   }
 
