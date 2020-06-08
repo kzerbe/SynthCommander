@@ -13,14 +13,14 @@ import {SynthmodelService} from "./synthmodel.service";
         <div class="form-group col-4">
           <label for="devicelist">select MIDI output device</label>
           <select id="devicelist" class="form-control" (change)="onOutputChange($event.target)">
-            <option *ngFor="let output of outputs | async; let idx=index" value={{idx}}>{{output.name}}</option>
+            <option *ngFor="let output of outputs$ | async; let idx=index" value={{idx}}>{{output.name}}</option>
           </select>
         </div>
         <div class="form-group col-4">
           <label for="devicemodel">synthesizer model</label>
           <select id="devicemodel" class="form-control" (change)="onModelChange($event.target)">
             <option [value]="null">choose model</option>
-            <option *ngFor="let model of models | async" value={{model}}>{{model}}</option>
+            <option *ngFor="let model of models$ | async" value={{model}}>{{model}}</option>
           </select>
         </div>
       </div>
@@ -45,16 +45,16 @@ import {SynthmodelService} from "./synthmodel.service";
 })
 export class AppComponent implements OnInit {
   title = 'Synth Commander';
-  outputs: Observable<Output[]>;
-  models: Observable<string[]>;
+  outputs$: Observable<Output[]>;
+  models$: Observable<string[]>;
   error: string;
 
   constructor(private midiService: WebmidiService, private synthmodelService: SynthmodelService) {
   }
 
   ngOnInit(): void {
-    this.outputs = this.midiService.outputs$;
-    this.models = this.synthmodelService.listModels();
+    this.outputs$ = this.midiService.outputs$;
+    this.models$ = this.synthmodelService.listModels();
     this.midiService.error$.subscribe(err => this.error = err);
   }
 
